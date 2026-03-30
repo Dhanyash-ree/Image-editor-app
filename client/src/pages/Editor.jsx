@@ -13,6 +13,7 @@ function Editor() {
   const [blur, setBlur] = useState(0);
   const [grayscale, setGrayscale] = useState(0);
   const [hue, setHue] = useState(0);
+  const [cropSize, setCropSize] = useState(100); // % of image
 
   // Upload Image
   const handleImage = (e) => {
@@ -52,8 +53,26 @@ function Editor() {
         grayscale(${grayscale}%)
         hue-rotate(${hue}deg)
       `;
+      const cropWidth = img.width * (cropSize / 100);
+const cropHeight = img.height * (cropSize / 100);
 
-      ctx.drawImage(img, 0, 0);
+const startX = (img.width - cropWidth) / 2;
+const startY = (img.height - cropHeight) / 2;
+
+canvas.width = cropWidth;
+canvas.height = cropHeight;
+
+      ctx.drawImage(
+  img,
+  startX,
+  startY,
+  cropWidth,
+  cropHeight,
+  0,
+  0,
+  cropWidth,
+  cropHeight
+);
 
       const link = document.createElement("a");
       link.download = "edited-image.png";
@@ -113,6 +132,18 @@ function Editor() {
             Adjustments
           </h2>
 
+        {/* Crop */}
+<div>
+  <label>Crop: {cropSize}%</label>
+  <input
+    type="range"
+    min="10"
+    max="100"
+    value={cropSize}
+    onChange={(e) => setCropSize(e.target.value)}
+    className="w-full"
+  />
+</div>
           {/* Brightness */}
           <div>
             <label>Brightness: {brightness}%</label>
